@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title th:text="${attore.nome + ' ' + attore.cognome}">Attore</title>
+	<link rel="stylesheet" th:href="@{/css/stile.css}">
+</head>
+<body>
+	<header th:replace="~{fragments/base :: intestazione}"></header>
+
+	<main class="contenuto">
+		<h1 th:text="${attore.nome + ' ' + attore.cognome}">Nome Cognome</h1>
+
+		<ul class="dati">
+			<li>Data di nascita: <span th:text="${#temporals.format(attore.dataNascita, 'dd/MM/yyyy')}">data</span></li>
+			<li>Nazionalità: <span th:text="${attore.nazionalita}">Nazionalità</span></li>
+		</ul>
+
+		<h2>Filmografia</h2>
+
+		<p th:if="${filmografia.isEmpty()}">Nessun film inserito.</p>
+
+		<table th:if="${!filmografia.isEmpty()}" class="tabella">
+			<tr>
+				<th>Anno</th>
+				<th>Film</th>
+				<th>Personaggio</th>
+			</tr>
+			<tr th:each="i : ${filmografia}">
+				<td th:text="${i.film.anno}">1972</td>
+				<td>
+					<a th:href="@{/film/{id}(id=${i.film.id})}" th:text="${i.film.titolo}">Titolo</a>
+				</td>
+				<td th:text="${i.personaggio}">Personaggio</td>
+			</tr>
+		</table>
+
+		<p><a th:href="@{/attori}">Tutti gli attori</a></p>
+	</main>
+</body>
+</html>

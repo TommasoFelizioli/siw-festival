@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Film</title>
+	<link rel="stylesheet" th:href="@{/css/stile.css}">
+</head>
+<body>
+	<header th:replace="~{fragments/base :: intestazione}"></header>
+
+	<main class="contenuto">
+		<h1>Film</h1>
+
+		<p th:if="${elencoFilm.isEmpty()}">Non ci sono film.</p>
+
+		<div class="griglia">
+			<a class="scheda" th:each="film : ${elencoFilm}" th:href="@{/film/{id}(id=${film.id})}">
+				<div class="copertina segnaposto" th:text="${film.titolo}">Titolo</div>
+				<h3 th:text="${film.titolo}">Titolo</h3>
+				<span th:text="${film.genere}">Genere</span> ·
+				<span th:text="${film.anno}">1972</span><br />
+				regia di <span th:text="${film.regista?.nome + ' ' + film.regista?.cognome}">Regista</span>
+			</a>
+		</div>
+
+		<p th:if="${isAdmin}"><a class="bottone" th:href="@{/admin/film/nuovo}">Aggiungi un film</a></p>
+	</main>
+</body>
+</html>

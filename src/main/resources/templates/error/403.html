@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Accesso non consentito</title>
+	<link rel="stylesheet" th:href="@{/css/stile.css}">
+</head>
+<body>
+	<header th:replace="~{fragments/base :: intestazione}"></header>
+
+	<main class="contenuto">
+		<section class="eroe">
+			<h1>403</h1>
+			<p>Non hai i permessi per eseguire questa operazione.</p>
+		</section>
+		<p><a th:href="@{/}">Torna alla home</a></p>
+	</main>
+</body>
+</html>

@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Sale</title>
+	<link rel="stylesheet" th:href="@{/css/stile.css}">
+</head>
+<body>
+	<header th:replace="~{fragments/base :: intestazione}"></header>
+
+	<main class="contenuto">
+		<h1>Sale</h1>
+
+		<p th:if="${sale.isEmpty()}">Non ci sono sale.</p>
+
+		<table th:if="${!sale.isEmpty()}" class="tabella">
+			<tr>
+				<th>Nome</th>
+				<th>Indirizzo</th>
+				<th>Capienza</th>
+				<th></th>
+			</tr>
+			<tr th:each="s : ${sale}">
+				<td th:text="${s.nome}">Nome</td>
+				<td th:text="${s.indirizzo}">Indirizzo</td>
+				<td th:text="${s.capienza}">200</td>
+				<td><a th:href="@{/admin/sale/{id}/modifica(id=${s.id})}">Modifica</a></td>
+			</tr>
+		</table>
+
+		<p><a class="bottone" th:href="@{/admin/sale/nuova}">Aggiungi una sala</a></p>
+	</main>
+</body>
+</html>

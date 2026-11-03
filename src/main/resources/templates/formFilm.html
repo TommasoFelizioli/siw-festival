@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title th:text="${film.id == null ? 'Nuovo film' : 'Modifica film'}">Film</title>
+	<link rel="stylesheet" th:href="@{/css/stile.css}">
+</head>
+<body>
+	<header th:replace="~{fragments/base :: intestazione}"></header>
+
+	<main class="contenuto">
+		<h1 th:text="${film.id == null ? 'Nuovo film' : 'Modifica film'}">Film</h1>
+
+		<form th:action="@{${film.id == null ? '/admin/film' : '/admin/film/' + film.id}}"
+			method="post" th:object="${film}">
+			<p th:each="errore : ${#fields.globalErrors()}" th:text="${errore}" class="errore"></p>
+			<p>
+				<label>Titolo:</label>
+				<input type="text" th:field="*{titolo}" />
+				<span th:if="${#fields.hasErrors('titolo')}" th:errors="*{titolo}" class="errore"></span>
+			</p>
+			<p>
+				<label>Anno:</label>
+				<input type="number" th:field="*{anno}" />
+				<span th:if="${#fields.hasErrors('anno')}" th:errors="*{anno}" class="errore"></span>
+			</p>
+			<p>
+				<label>Durata (minuti):</label>
+				<input type="number" th:field="*{durata}" />
+				<span th:if="${#fields.hasErrors('durata')}" th:errors="*{durata}" class="errore"></span>
+			</p>
+			<p>
+				<label>Genere:</label>
+				<input type="text" th:field="*{genere}" />
+				<span th:if="${#fields.hasErrors('genere')}" th:errors="*{genere}" class="errore"></span>
+			</p>
+			<p>
+				<label>Paese di produzione:</label>
+				<input type="text" th:field="*{paeseProduzione}" />
+			</p>
+			<p>
+				<label>Regista:</label>
+				<select name="registaId">
+					<option value="">-- scegli --</option>
+					<option th:each="r : ${registi}" th:value="${r.id}" th:text="${r.cognome + ' ' + r.nome}"
+						th:selected="${r.id == registaIdScelto}">Regista</option>
+				</select>
+			</p>
+			<p>
+				<button type="submit">Salva</button>
+			</p>
+		</form>
+
+		<p>
+			<a th:if="${film.id == null}" th:href="@{/film}">Annulla</a>
+			<a th:if="${film.id != null}" th:href="@{/film/{id}(id=${film.id})}">Annulla</a>
+		</p>
+	</main>
+</body>
+</html>

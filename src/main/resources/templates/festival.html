@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title th:text="${festival.nome}">Festival</title>
+	<link rel="stylesheet" th:href="@{/css/stile.css}">
+</head>
+<body>
+	<header th:replace="~{fragments/base :: intestazione}"></header>
+
+	<main class="contenuto">
+		<h1>
+			<span th:text="${festival.nome}">Nome festival</span>
+			<span th:text="${festival.anno}">2026</span>
+		</h1>
+
+		<p>
+			<span th:text="${festival.citta}">Città</span>,
+			dal <span th:text="${#temporals.format(festival.dataInizio, 'dd/MM/yyyy')}">inizio</span>
+			al <span th:text="${#temporals.format(festival.dataFine, 'dd/MM/yyyy')}">fine</span>
+		</p>
+
+		<p th:text="${festival.descrizione}">Descrizione</p>
+
+		<p th:if="${errore}" th:text="${errore}" class="errore"></p>
+
+		<h2>Film in programma</h2>
+
+		<p th:if="${festival.films.isEmpty()}">Nessun film partecipa a questo festival.</p>
+
+		<ul class="elenco">
+			<li th:each="film : ${festival.films}">
+				<a th:href="@{/film/{id}(id=${film.id})}">
+					<strong th:text="${film.titolo}">Titolo</strong>
+				</a>
+				(<span th:text="${film.anno}">1972</span>,
+				<span th:text="${film.genere}">Genere</span>)
+				- regia di
+				<span th:text="${film.regista?.nome + ' ' + film.regista?.cognome}">Regista</span>
+
+				<form th:if="${isAdmin}"
+					th:action="@{/admin/festival/{id}/film/{fid}/rimuovi(id=${festival.id}, fid=${film.id})}"
+					method="post" class="in-linea">
+					<button type="submit" class="bottone-piccolo">Rimuovi</button>
+				</form>
+			</li>
+		</ul>
+
+		<h2>Programma delle proiezioni</h2>
+		
+		<p><a th:href="${frontendUrl + '/festival/' + festival.id}">Apri il programma interattivo, con filtri per giorno e sala</a></p>
+		<p th:if="${proiezioni.isEmpty()}">Nessuna proiezione in programma.</p>
+
+		<table th:if="${!proiezioni.isEmpty()}" class="tabella">
+			<tr>
+				<th>Data</th>
+				<th>Orario</th>
+				<th>Film</th>
+				<th>Sala</th>
+				<th>Stato</th>
+				<th th:if="${isAdmin}">Azioni</th>
+			</tr>
+			<tr th:each="p : ${proiezioni}">
+				<td th:text="${#temporals.format(p.data, 'dd/MM/yyyy')}">data</td>
+				<td>
+					<span th:text="${p.ora}">18:00</span> -
+					<span th:text="${p.oraFine}">20:55</span>
+				</td>
+				<td>
+					<a th:href="@{/film/{id}(id=${p.film.id})}" th:text="${p.film.titolo}">Titolo</a>
+				</td>
+				<td th:text="${p.sala.nome}">Sala</td>
+				<td th:text="${p.stato}">SCHEDULED</td>
+				<td th:if="${isAdmin}">
+					<span th:if="${p.stato.name() == 'SCHEDULED'}">
+						<a th:href="@{/admin/proiezioni/{id}/modifica(id=${p.id})}">Modifica</a>
+						<form th:action="@{/admin/proiezioni/{id}/cancella(id=${p.id})}" method="post" class="in-linea">
+							<button type="submit" class="bottone-piccolo">Cancella</button>
+						</form>
+					</span>
+				</td>
+			</tr>
+		</table>
+
+		<div th:if="${isAdmin}" class="scheda">
+			<h3>Gestione del festival</h3>
+
+			<p th:if="${filmDisponibili.isEmpty()}">Tutti i film partecipano già a questo festival.</p>
+
+			<form th:if="${!filmDisponibili.isEmpty()}"
+				th:action="@{/admin/festival/{id}/film(id=${festival.id})}" method="post">
+				<label>Aggiungi un film:</label>
+				<select name="filmId">
+					<option th:each="film : ${filmDisponibili}" th:value="${film.id}" th:text="${film.titolo}">Titolo</option>
+				</select>
+				<button type="submit">Aggiungi</button>
+			</form>
+
+			<p>
+				<a class="bottone" th:href="@{/admin/festival/{id}/proiezioni/nuova(id=${festival.id})}">Programma una proiezione</a>
+				<a class="bottone" th:href="@{/admin/festival/{id}/modifica(id=${festival.id})}">Modifica il festival</a>
+			</p>
+		</div>
+
+		<p><a th:href="@{/festival}">Torna all'elenco</a></p>
+	</main>
+</body>
+</html>

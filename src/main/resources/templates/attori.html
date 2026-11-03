@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Attori</title>
+	<link rel="stylesheet" th:href="@{/css/stile.css}">
+</head>
+<body>
+	<header th:replace="~{fragments/base :: intestazione}"></header>
+
+	<main class="contenuto">
+		<h1>Attori</h1>
+
+		<p th:if="${attori.isEmpty()}">Non ci sono attori.</p>
+
+		<ul class="elenco">
+			<li th:each="attore : ${attori}">
+				<a th:href="@{/attori/{id}(id=${attore.id})}">
+					<strong th:text="${attore.cognome + ' ' + attore.nome}">Cognome Nome</strong>
+				</a>
+				- <span th:text="${attore.nazionalita}">Nazionalità</span>
+			</li>
+		</ul>
+	</main>
+</body>
+</html>

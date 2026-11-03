@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title th:text="${proiezioneId == null ? 'Nuova proiezione' : 'Modifica proiezione'}">Proiezione</title>
+	<link rel="stylesheet" th:href="@{/css/stile.css}">
+</head>
+<body>
+	<header th:replace="~{fragments/base :: intestazione}"></header>
+
+	<main class="contenuto">
+		<h1 th:text="${proiezioneId == null ? 'Nuova proiezione' : 'Modifica proiezione'}">Proiezione</h1>
+
+		<p>
+			<strong th:text="${festival.nome + ' ' + festival.anno}">Festival</strong>:
+			dal <span th:text="${#temporals.format(festival.dataInizio, 'dd/MM/yyyy')}">inizio</span>
+			al <span th:text="${#temporals.format(festival.dataFine, 'dd/MM/yyyy')}">fine</span>
+		</p>
+
+		<p th:if="${errore}" th:text="${errore}" class="errore"></p>
+
+		<form th:action="@{${proiezioneId == null ? '/admin/festival/' + festival.id + '/proiezioni' : '/admin/proiezioni/' + proiezioneId}}"
+			method="post">
+			<p>
+				<label>Film:</label>
+				<select name="filmId">
+					<option value="">-- scegli --</option>
+					<option th:each="f : ${festival.films}" th:value="${f.id}"
+						th:text="${f.titolo + ' (' + f.durata + ' min)'}"
+						th:selected="${f.id == filmIdScelto}">Film</option>
+				</select>
+			</p>
+			<p>
+				<label>Sala:</label>
+				<select name="salaId">
+					<option value="">-- scegli --</option>
+					<option th:each="s : ${sale}" th:value="${s.id}" th:text="${s.nome}"
+						th:selected="${s.id == salaIdScelta}">Sala</option>
+				</select>
+			</p>
+			<p>
+				<label>Data:</label>
+				<input type="date" name="data" th:value="${dataScelta}" />
+			</p>
+			<p>
+				<label>Ora di inizio:</label>
+				<input type="time" name="ora" th:value="${oraScelta}" />
+			</p>
+			<p>
+				<button type="submit">Salva</button>
+			</p>
+		</form>
+
+		<p><a th:href="@{/festival/{id}(id=${festival.id})}">Annulla</a></p>
+	</main>
+</body>
+</html>

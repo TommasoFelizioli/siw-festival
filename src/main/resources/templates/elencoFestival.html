@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Festival</title>
+	<link rel="stylesheet" th:href="@{/css/stile.css}">
+</head>
+<body>
+	<header th:replace="~{fragments/base :: intestazione}"></header>
+
+	<main class="contenuto">
+		<section class="eroe">
+			<h1>CineFest</h1>
+			<p>I festival del cinema, i film in programma, gli attori e le proiezioni nelle sale.</p>
+		</section>
+
+		<h2>Festival</h2>
+
+		<p th:if="${elencoFestival.isEmpty()}">Non ci sono festival.</p>
+
+		<div class="griglia">
+			<a class="scheda" th:each="festival : ${elencoFestival}" th:href="@{/festival/{id}(id=${festival.id})}">
+				<div class="copertina segnaposto" th:text="${festival.nome}">Nome festival</div>
+				<h3>
+					<span th:text="${festival.nome}">Nome festival</span>
+					<span th:text="${festival.anno}">2026</span>
+				</h3>
+				<span th:text="${festival.citta}">Città</span><br />
+				dal <span th:text="${#temporals.format(festival.dataInizio, 'dd/MM/yyyy')}">inizio</span>
+				al <span th:text="${#temporals.format(festival.dataFine, 'dd/MM/yyyy')}">fine</span>
+			</a>
+		</div>
+
+		<p th:if="${isAdmin}"><a class="bottone" th:href="@{/admin/festival/nuovo}">Aggiungi un festival</a></p>
+	</main>
+</body>
+</html>

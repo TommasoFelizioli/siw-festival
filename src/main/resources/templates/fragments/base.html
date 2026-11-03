@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+	<meta charset="UTF-8">
+	<title>Frammenti comuni</title>
+</head>
+<body>
+	<header th:fragment="intestazione" class="intestazione">
+		<a class="marchio" th:href="@{/}">CineFest</a>
+
+		<nav class="menu">
+			<a th:href="@{/festival}">Festival</a>
+			<a th:href="@{/film}">Film</a>
+			<a th:href="@{/attori}">Attori</a>
+			<a th:href="${frontendUrl + '/'}">Programmi</a>
+			<a th:if="${isAdmin}" th:href="@{/admin/sale}">Sale</a>
+			<a th:if="${isAdmin}" th:href="@{/admin/analisi-fetch}">Analisi fetch</a>
+		</nav>
+
+		<div class="utente">
+			<span th:if="${userDetails == null}">
+				<a th:href="@{/login}">Accedi</a>
+				<a th:href="@{/register}">Registrati</a>
+			</span>
+			<span th:if="${userDetails != null}">
+				Ciao, <strong th:text="${userDetails.username}">username</strong>
+				<form th:action="@{/logout}" method="post" class="in-linea">
+					<button type="submit" class="bottone-link">Esci</button>
+				</form>
+			</span>
+		</div>
+	</header>
+</body>
+</html>

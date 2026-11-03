@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title th:text="${sala.id == null ? 'Nuova sala' : 'Modifica sala'}">Sala</title>
+	<link rel="stylesheet" th:href="@{/css/stile.css}">
+</head>
+<body>
+	<header th:replace="~{fragments/base :: intestazione}"></header>
+
+	<main class="contenuto">
+		<h1 th:text="${sala.id == null ? 'Nuova sala' : 'Modifica sala'}">Sala</h1>
+
+		<form th:action="@{${sala.id == null ? '/admin/sale' : '/admin/sale/' + sala.id}}"
+			method="post" th:object="${sala}">
+			<p th:each="errore : ${#fields.globalErrors()}" th:text="${errore}" class="errore"></p>
+			<p>
+				<label>Nome:</label>
+				<input type="text" th:field="*{nome}" />
+				<span th:if="${#fields.hasErrors('nome')}" th:errors="*{nome}" class="errore"></span>
+			</p>
+			<p>
+				<label>Indirizzo:</label>
+				<input type="text" th:field="*{indirizzo}" />
+				<span th:if="${#fields.hasErrors('indirizzo')}" th:errors="*{indirizzo}" class="errore"></span>
+			</p>
+			<p>
+				<label>Capienza:</label>
+				<input type="number" th:field="*{capienza}" />
+				<span th:if="${#fields.hasErrors('capienza')}" th:errors="*{capienza}" class="errore"></span>
+			</p>
+			<p>
+				<button type="submit">Salva</button>
+			</p>
+		</form>
+
+		<p><a th:href="@{/admin/sale}">Annulla</a></p>
+	</main>
+</body>
+</html>

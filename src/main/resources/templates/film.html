@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title th:text="${film.titolo}">Film</title>
+	<link rel="stylesheet" th:href="@{/css/stile.css}">
+</head>
+<body>
+	<header th:replace="~{fragments/base :: intestazione}"></header>
+
+	<main class="contenuto">
+		<h1 th:text="${film.titolo}">Titolo</h1>
+
+		<ul class="dati">
+			<li>Anno: <span th:text="${film.anno}">1972</span></li>
+			<li>Durata: <span th:text="${film.durata}">175</span> minuti</li>
+			<li>Genere: <span th:text="${film.genere}">Genere</span></li>
+			<li>Paese di produzione: <span th:text="${film.paeseProduzione}">Paese</span></li>
+			<li>Regia: <span th:text="${film.regista?.nome + ' ' + film.regista?.cognome}">Regista</span></li>
+		</ul>
+
+		<p th:if="${isAdmin}">
+			<a class="bottone" th:href="@{/admin/film/{id}/modifica(id=${film.id})}">Modifica il film</a>
+		</p>
+
+		<h2>Cast</h2>
+
+		<p th:if="${interpretazioni.isEmpty()}">Nessun attore inserito.</p>
+
+		<table th:if="${!interpretazioni.isEmpty()}" class="tabella">
+			<tr>
+				<th>Attore</th>
+				<th>Personaggio</th>
+				<th th:if="${isAdmin}"></th>
+			</tr>
+			<tr th:each="i : ${interpretazioni}">
+				<td>
+					<a th:href="@{/attori/{id}(id=${i.attore.id})}" th:text="${i.attore.nome + ' ' + i.attore.cognome}">Attore</a>
+				</td>
+				<td th:text="${i.personaggio}">Personaggio</td>
+				<td th:if="${isAdmin}">
+					<form th:action="@{/admin/film/{id}/cast/{iid}/rimuovi(id=${film.id}, iid=${i.id})}" method="post">
+						<button type="submit" class="bottone-piccolo">Rimuovi</button>
+					</form>
+				</td>
+			</tr>
+		</table>
+
+		<div th:if="${isAdmin}" class="scheda">
+			<h3>Aggiungi un attore al cast</h3>
+			<p th:if="${erroreCast}" th:text="${erroreCast}" class="errore"></p>
+			<form th:action="@{/admin/film/{id}/cast(id=${film.id})}" method="post">
+				<p>
+					<label>Attore:</label>
+					<select name="attoreId">
+						<option value="">-- scegli --</option>
+						<option th:each="a : ${attori}" th:value="${a.id}" th:text="${a.cognome + ' ' + a.nome}">Attore</option>
+					</select>
+				</p>
+				<p>
+					<label>Personaggio:</label>
+					<input type="text" name="personaggio" />
+				</p>
+				<p>
+					<button type="submit">Aggiungi al cast</button>
+				</p>
+			</form>
+		</div>
+
+		<h2>Festival a cui partecipa</h2>
+
+		<p th:if="${film.festivals.isEmpty()}">Non partecipa a nessun festival.</p>
+
+		<ul class="elenco">
+			<li th:each="festival : ${film.festivals}">
+				<a th:href="@{/festival/{id}(id=${festival.id})}">
+					<span th:text="${festival.nome}">Nome festival</span>
+					<span th:text="${festival.anno}">2026</span>
+				</a>
+				- <span th:text="${festival.citta}">Città</span>
+			</li>
+		</ul>
+
+		<h2>Proiezioni</h2>
+
+		<p th:if="${proiezioni.isEmpty()}">Nessuna proiezione in programma.</p>
+
+		<table th:if="${!proiezioni.isEmpty()}" class="tabella">
+			<tr>
+				<th>Data</th>
+				<th>Orario</th>
+				<th>Festival</th>
+				<th>Sala</th>
+				<th>Stato</th>
+			</tr>
+			<tr th:each="p : ${proiezioni}">
+				<td th:text="${#temporals.format(p.data, 'dd/MM/yyyy')}">data</td>
+				<td>
+					<span th:text="${p.ora}">18:00</span> -
+					<span th:text="${p.oraFine}">20:55</span>
+				</td>
+				<td>
+					<a th:href="@{/festival/{id}(id=${p.festival.id})}" th:text="${p.festival.nome}">Festival</a>
+				</td>
+				<td th:text="${p.sala.nome}">Sala</td>
+				<td th:text="${p.stato}">SCHEDULED</td>
+			</tr>
+		</table>
+
+		<h2>Recensioni</h2>
+
+		<p th:if="${recensioni.isEmpty()}">Nessuna recensione.</p>
+
+		<div class="scheda" th:each="r : ${recensioni}">
+			<strong th:text="${r.autore.name + ' ' + r.autore.surname}">Autore</strong>
+			- voto <span th:text="${r.voto}">5</span>/5
+			(<span th:text="${#temporals.format(r.data, 'dd/MM/yyyy')}">data</span>)
+			<br />
+			<span th:text="${r.testo}">Testo della recensione</span>
+
+			<span th:if="${utenteId != null and r.autore.id == utenteId}">
+				<br />
+				<a th:href="@{/recensioni/{id}/modifica(id=${r.id})}">Modifica</a>
+				<form th:action="@{/recensioni/{id}/elimina(id=${r.id})}" method="post" class="in-linea">
+					<button type="submit" class="bottone-piccolo">Elimina</button>
+				</form>
+			</span>
+		</div>
+
+		<p th:if="${userDetails == null}">
+			<a th:href="@{/login}">Accedi</a> per scrivere una recensione.
+		</p>
+
+		<div th:if="${userDetails != null}">
+			<h3>Scrivi una recensione</h3>
+
+			<form th:action="@{/film/{id}/recensioni(id=${film.id})}" method="post" th:object="${recensione}">
+				<p th:each="errore : ${#fields.globalErrors()}" th:text="${errore}" class="errore"></p>
+				<p>
+					<label>Voto (da 1 a 5):</label>
+					<input type="number" th:field="*{voto}" />
+					<span th:if="${#fields.hasErrors('voto')}" th:errors="*{voto}" class="errore"></span>
+				</p>
+				<p>
+					<label>Testo:</label>
+					<textarea th:field="*{testo}" rows="4" cols="50"></textarea>
+					<span th:if="${#fields.hasErrors('testo')}" th:errors="*{testo}" class="errore"></span>
+				</p>
+				<p>
+					<button type="submit">Pubblica</button>
+				</p>
+			</form>
+		</div>
+
+		<p><a th:href="@{/film}">Tutti i film</a></p>
+	</main>
+</body>
+</html>

@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Modifica recensione</title>
+	<link rel="stylesheet" th:href="@{/css/stile.css}">
+</head>
+<body>
+	<header th:replace="~{fragments/base :: intestazione}"></header>
+
+	<main class="contenuto">
+		<h1>Modifica la tua recensione</h1>
+		<p>Film: <strong th:text="${titoloFilm}">Titolo</strong></p>
+
+		<form th:action="@{/recensioni/{id}(id=${recensione.id})}" method="post" th:object="${recensione}">
+			<p>
+				<label>Voto (da 1 a 5):</label>
+				<input type="number" th:field="*{voto}" />
+				<span th:if="${#fields.hasErrors('voto')}" th:errors="*{voto}" class="errore"></span>
+			</p>
+			<p>
+				<label>Testo:</label>
+				<textarea th:field="*{testo}" rows="4" cols="50"></textarea>
+				<span th:if="${#fields.hasErrors('testo')}" th:errors="*{testo}" class="errore"></span>
+			</p>
+			<p>
+				<button type="submit">Salva le modifiche</button>
+			</p>
+		</form>
+
+		<p><a th:href="@{/film/{id}(id=${filmId})}">Annulla</a></p>
+	</main>
+</body>
+</html>

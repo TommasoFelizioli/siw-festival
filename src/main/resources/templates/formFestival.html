@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title th:text="${festival.id == null ? 'Nuovo festival' : 'Modifica festival'}">Festival</title>
+	<link rel="stylesheet" th:href="@{/css/stile.css}">
+</head>
+<body>
+	<header th:replace="~{fragments/base :: intestazione}"></header>
+
+	<main class="contenuto">
+		<h1 th:text="${festival.id == null ? 'Nuovo festival' : 'Modifica festival'}">Festival</h1>
+
+		<form th:action="@{${festival.id == null ? '/admin/festival' : '/admin/festival/' + festival.id}}"
+			method="post" th:object="${festival}">
+			<p th:each="errore : ${#fields.globalErrors()}" th:text="${errore}" class="errore"></p>
+			<p>
+				<label>Nome:</label>
+				<input type="text" th:field="*{nome}" />
+				<span th:if="${#fields.hasErrors('nome')}" th:errors="*{nome}" class="errore"></span>
+			</p>
+			<p>
+				<label>Anno:</label>
+				<input type="number" th:field="*{anno}" />
+				<span th:if="${#fields.hasErrors('anno')}" th:errors="*{anno}" class="errore"></span>
+			</p>
+			<p>
+				<label>Città:</label>
+				<input type="text" th:field="*{citta}" />
+				<span th:if="${#fields.hasErrors('citta')}" th:errors="*{citta}" class="errore"></span>
+			</p>
+			<p>
+				<label>Data di inizio:</label>
+				<input type="date" th:field="*{dataInizio}" />
+				<span th:if="${#fields.hasErrors('dataInizio')}" th:errors="*{dataInizio}" class="errore"></span>
+			</p>
+			<p>
+				<label>Data di fine:</label>
+				<input type="date" th:field="*{dataFine}" />
+				<span th:if="${#fields.hasErrors('dataFine')}" th:errors="*{dataFine}" class="errore"></span>
+			</p>
+			<p>
+				<label>Descrizione:</label>
+				<textarea th:field="*{descrizione}" rows="4" cols="50"></textarea>
+			</p>
+			<p>
+				<button type="submit">Salva</button>
+			</p>
+		</form>
+
+		<p>
+			<a th:if="${festival.id == null}" th:href="@{/festival}">Annulla</a>
+			<a th:if="${festival.id != null}" th:href="@{/festival/{id}(id=${festival.id})}">Annulla</a>
+		</p>
+	</main>
+</body>
+</html>
